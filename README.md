@@ -50,6 +50,8 @@ files:
     type: "csv"
   - path: "data/questions2.xlsx"
     type: "excel"
+
+max_answers: 2  # Configurable number of answers to return
 ```
 
 ## Running the Application

@@ -4,4 +4,4 @@ files:
   - path: "data/questions2.xlsx"
     type: "excel"
   
-max_answers: 2  # Configurable number of answers to return
+max_answers: 3
