@@ -19,8 +19,9 @@ type Config struct {
 }
 
 type FileConfig struct {
-	Path string `yaml:"path"`
-	Type string `yaml:"type"` // "csv" or "excel"
+	Path string `yaml:"path,omitempty"` // Path for local files
+	URL  string `yaml:"url,omitempty"`  // URL for remote files
+	Type string `yaml:"type"`           // "csv" or "excel"
 }
 
 // Function to load configuration from config.yaml
@@ -55,16 +56,30 @@ func main() {
 
 	// Initialize handlers based on config
 	for _, file := range config.Files {
-		var handler interface{}
-		switch file.Type {
-		case "csv":
-			handler = handlers.NewCSVHandler(file.Path)
-		case "excel":
-			handler = handlers.NewExcelHandler(file.Path)
+		var handler interfaces.QuestionAnswerSource
+
+		// Check if file has a URL or a path to determine if it's remote or local
+		if file.URL != "" { // Check if there's a URL field
+			switch file.Type {
+			case "csv":
+				handler = handlers.NewRemoteCSVHandler(file.URL)
+			case "excel":
+				// If you have a handler for remote Excel files, add it here
+				handler = handlers.NewRemoteExcelHandler(file.URL)
+			}
+		} else { // If no URL, it's a local file
+			switch file.Type {
+			case "csv":
+				handler = handlers.NewCSVHandler(file.Path)
+			case "excel":
+				// Assuming you have a local handler for Excel
+				handler = handlers.NewExcelHandler(file.Path)
+			}
 		}
 
+		// Add the handler to the service if it's not nil
 		if handler != nil {
-			qaService.AddSource(handler.(interfaces.QuestionAnswerSource))
+			qaService.AddSource(handler)
 		}
 	}
 

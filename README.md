@@ -50,6 +50,8 @@ files:
     type: "csv"
   - path: "data/questions2.xlsx"
     type: "excel"
+  - url: "https://example.com/questions.csv"
+    type: "csv"
 
 max_answers: 2  # Configurable number of answers to return
 ```
