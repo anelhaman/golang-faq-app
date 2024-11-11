@@ -20,7 +20,9 @@ golang-qa-app/
 │   └── questions2.xlsx     # Example Excel data file
 ├── handlers/
 │   ├── csv_handler.go      # CSV file handler
-│   └── excel_handler.go    # Excel file handler
+│   ├── excel_handler.go    # Excel file handler
+│   ├── remote_csv_handler.go      # Remote CSV file handler
+│   └── remote_excel_handler.go    # Remote Excel file handler
 ├── interfaces/
 │   └── qa_source.go        # Interface definition for question-answer sources
 ├── services/
