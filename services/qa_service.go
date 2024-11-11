@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"golang-qa-app/interfaces"
+	"math"
 	"sort"
 	"strings"
 	"time"
@@ -71,9 +72,12 @@ func (s *QAService) searchWithConfidence(source interfaces.QuestionAnswerSource,
 		similarity := calculateSimilarity(query, question)
 		if similarity > 0.55 { // Confidence threshold, adjust as needed
 
+			// Round confidence to two decimal places
+			roundedConfidence := math.Round(similarity*100) / 100
+
 			results = append(results, AnswerResult{
 				Answer:     answer,
-				Confidence: similarity,
+				Confidence: roundedConfidence,
 				Timestamp:  time.Now(),
 			})
 		}

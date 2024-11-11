@@ -1,7 +1,0 @@
-files:
-  - path: "./data/questions1.csv"
-    type: "csv"
-  - path: "data/questions2.xlsx"
-    type: "excel"
-  
-max_answers: 2  # Configurable number of answers to return
