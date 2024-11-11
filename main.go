@@ -42,6 +42,7 @@ func loadConfig() (Config, error) {
 }
 
 func main() {
+
 	config, err := loadConfig()
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)

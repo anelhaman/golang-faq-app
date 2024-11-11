@@ -1,12 +1,17 @@
 files:
   - path: "./data/questions1.csv"
     type: "csv"
+
   - path: "data/questions2.xlsx"
     type: "excel"
 
-  # - url: "https://example.com/questions.csv"
-  #   type: "csv"
-  # - url: "https://example.com/questions.xlsx"
-  #   type: "excel"
+  - url: "https://example.com/questions.csv"
+    type: "csv"
+
+  - url: "https://example.com/questions.xlsx"
+    type: "excel"
+
+  - path: "data/test/not-exist-questions.xlsx"
+    type: "excel"
 
 max_answers: 3
