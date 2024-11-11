@@ -99,5 +99,24 @@ Response:
 - services/qa_service.go: The core service that processes the query, calculates similarity, and provides the answer with confidence.
 - main.go: Initializes the application, loads data sources, and starts the Gin server.
 
+## Docker Setup
+
+To run the application using Docker, follow these steps:
+
+### Build and Start with Docker Compose
+
+1. Ensure that you have Docker and Docker Compose installed on your machine.
+
+2. In the root of your project directory, you will find the `docker-compose.yml` file. This file defines the necessary services to run the application, including NGINX as a reverse proxy and the Go application.
+
+3. If you have not already, create a `config.yaml` file inside the `config/` directory with the necessary configuration (refer to the `config/config.yaml` file structure in the project).
+
+4. Run the following command to build and start the services:
+
+   ```
+   docker-compose up --build
+   ```
+Once the containers are up and running, the Go application will be available at http://localhost (NGINX will forward requests to the Go application running on port 8080).
+
 ## License
 This project is licensed under the MIT License.
