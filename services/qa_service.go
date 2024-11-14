@@ -7,6 +7,9 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"unicode"
+
+	gothaiwordcut "github.com/narongdejsrn/go-thaiwordcut"
 )
 
 type AnswerResult struct {
@@ -86,9 +89,18 @@ func (s *QAService) searchWithConfidence(source interfaces.QuestionAnswerSource,
 }
 
 func calculateSimilarity(query, question string) float64 {
-	qWords := strings.Fields(strings.ToLower(query))
-	aWords := strings.Fields(strings.ToLower(question))
+
+	var qWords, aWords []string
+
 	matchCount := 0
+
+	if containsThai(query) {
+		qWords = cutThaiWord(strings.ToLower(query))
+		aWords = cutThaiWord(strings.ToLower(question))
+	} else {
+		qWords = strings.Fields(strings.ToLower(query))
+		aWords = strings.Fields(strings.ToLower(question))
+	}
 
 	for _, qWord := range qWords {
 		for _, aWord := range aWords {
@@ -99,4 +111,37 @@ func calculateSimilarity(query, question string) float64 {
 	}
 
 	return float64(matchCount*2) / float64(len(qWords)+len(aWords)) // Ratio of matches
+}
+
+func cutThaiWord(s string) []string {
+
+	segmenter := gothaiwordcut.Wordcut()
+	segmenter.LoadDefaultDict()
+	result := segmenter.Segment(s)
+
+	return result
+}
+
+//	func containsThai(text string) bool {
+//		for _, r := range text {
+//			if unicode.Is(unicode.Thai, r) {
+//				return true
+//			}
+//		}
+//		return false
+//	}
+func containsThai(text string) bool {
+	count := 0
+	for _, r := range text {
+		if unicode.Is(unicode.Thai, r) {
+			return true
+		} else if unicode.Is(unicode.Latin, r) {
+			return false
+		}
+		count++
+		if count >= 3 {
+			break
+		}
+	}
+	return false
 }
