@@ -122,14 +122,6 @@ func cutThaiWord(s string) []string {
 	return result
 }
 
-//	func containsThai(text string) bool {
-//		for _, r := range text {
-//			if unicode.Is(unicode.Thai, r) {
-//				return true
-//			}
-//		}
-//		return false
-//	}
 func containsThai(text string) bool {
 	count := 0
 	for _, r := range text {

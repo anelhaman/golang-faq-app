@@ -33,6 +33,8 @@ COPY --from=builder /app/config/config.yaml config/
 # Copy data from the build container
 COPY --from=builder /app/data data/
 
+COPY --from=builder /go/pkg/mod/github.com/narongdejsrn/go-thaiwordcut@v0.0.0-20190610123805-0a152d1829c4/dict/lexitron.txt /go/pkg/mod/github.com/narongdejsrn/go-thaiwordcut@v0.0.0-20190610123805-0a152d1829c4/dict/lexitron.txt
+
 # Expose port 8080 for the Go app
 EXPOSE 8080
 

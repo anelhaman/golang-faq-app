@@ -34,7 +34,7 @@ golang-qa-app/
 
 # Getting Started
 Prerequisites
-- Go 1.18+
+- Go 1.23
 - Gin Gonic
 - Excelize (for handling Excel files)
 - YAML v3
@@ -67,7 +67,7 @@ go run main.go
 The API will run on http://localhost:8080.
 
 ## API Endpoints
-GET /answer
+POST /answer
 
 Description: Finds the best answer for a given question.
 
@@ -79,7 +79,11 @@ query (string, required): The question to find the best answer for.
 Example:
 
 ```
-GET http://localhost:8080/answer?query=What is Golang?
+POST http://localhost:8080/answer
+
+{
+	"q": "What is Golang?"
+}
 ```
 
 Response:

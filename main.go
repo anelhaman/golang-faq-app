@@ -92,9 +92,17 @@ func main() {
 	// Set up Gin Gonic API
 	router := gin.Default()
 
-	router.GET("/answer", func(c *gin.Context) {
-		question := c.Query("question")
-		result, err := qaService.FindBestAnswer(question)
+	router.POST("/answer", func(c *gin.Context) {
+		var requestBody struct {
+			Q string `json:"q"`
+		}
+
+		if err := c.ShouldBindJSON(&requestBody); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
+			return
+		}
+
+		result, err := qaService.FindBestAnswer(requestBody.Q)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		} else {
