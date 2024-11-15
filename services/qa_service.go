@@ -2,7 +2,7 @@ package services
 
 import (
 	"errors"
-	"golang-qa-app/interfaces"
+	"golang-faq-app/interfaces"
 	"math"
 	"sort"
 	"strings"

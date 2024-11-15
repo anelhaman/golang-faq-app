@@ -1,8 +1,9 @@
-module golang-qa-app
+module golang-faq-app
 
 go 1.23.0
 
 require (
+	github.com/RoaringBitmap/roaring v1.9.4
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-resty/resty/v2 v2.16.0
 	github.com/narongdejsrn/go-thaiwordcut v0.0.0-20190610123805-0a152d1829c4
@@ -11,7 +12,6 @@ require (
 )
 
 require (
-	github.com/RoaringBitmap/roaring v1.9.4 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/bits-and-blooms/bitset v1.12.0 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect

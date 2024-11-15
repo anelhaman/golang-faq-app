@@ -1,6 +1,6 @@
 # Golang QA App
 
-`golang-qa-app` is a question-answering API built in Go. It reads questions and answers from multiple CSV or Excel files and responds with the answer that most closely matches a given query. The application includes confidence scoring and timestamps in responses.
+`golang-faq-app` is a question-answering API built in Go. It reads questions and answers from multiple CSV or Excel files and responds with the answer that most closely matches a given query. The application includes confidence scoring and timestamps in responses.
 
 ## Features
 
@@ -12,7 +12,7 @@
 ## Project Structure
 
 ```plaintext
-golang-qa-app/
+golang-faq-app/
 ├── config/
 │   └── config.yaml         # Configuration file with paths to data files
 ├── data/

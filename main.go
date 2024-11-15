@@ -1,9 +1,9 @@
 package main
 
 import (
-	"golang-qa-app/handlers"
-	"golang-qa-app/interfaces"
-	"golang-qa-app/services"
+	"golang-faq-app/handlers"
+	"golang-faq-app/interfaces"
+	"golang-faq-app/services"
 	"log"
 	"net/http"
 	"os"
