@@ -10,8 +10,14 @@ import (
 	"time"
 	"unicode"
 
+	roaring "github.com/RoaringBitmap/roaring"
 	gothaiwordcut "github.com/narongdejsrn/go-thaiwordcut"
 )
+
+// Global map for word-to-ID mapping
+var wordIDMap = make(map[string]uint32)
+var wordIDCounter uint32 = 0
+var wordIDMu sync.Mutex
 
 type AnswerResult struct {
 	Answer     string    `json:"answer"`
@@ -100,42 +106,70 @@ func (s *QAService) searchWithConfidence(source interfaces.QuestionAnswerSource,
 	return results
 }
 
+// Function to get or assign an ID to a word
+func getWordID(word string) uint32 {
+	wordIDMu.Lock()
+	defer wordIDMu.Unlock()
+
+	id, exists := wordIDMap[word]
+	if !exists {
+		id = wordIDCounter
+		wordIDMap[word] = id
+		wordIDCounter++
+	}
+	return id
+}
+
+// Helper function to create a bitmap from a list of words
+func createBitmapFromWords(words []string) *roaring.Bitmap {
+	bitmap := roaring.New()
+	for _, word := range words {
+		id := getWordID(word)
+		bitmap.Add(id)
+	}
+	return bitmap
+}
+
 func calculateSimilarityParallel(query string, questions []string) map[string]float64 {
-
-	var queryWords, questionWords []string
-
 	results := make(map[string]float64)
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 
-	for _, question := range questions { // Use questions here
+	// Convert query words to roaring bitmap
+	var queryBitmap *roaring.Bitmap
+	if containsThai(query) {
+		queryWords := cutThaiWord(strings.ToLower(query))
+		queryBitmap = createBitmapFromWords(queryWords)
+	} else {
+		queryWords := strings.Fields(strings.ToLower(query))
+		queryBitmap = createBitmapFromWords(queryWords)
+	}
+
+	for _, question := range questions {
 		wg.Add(1)
 		go func(question string) {
 			defer wg.Done()
 
-			if containsThai(query) {
-				queryWords = cutThaiWord(strings.ToLower(query))       // Tokenize query
-				questionWords = cutThaiWord(strings.ToLower(question)) // Tokenize question
+			// Convert question words to roaring bitmap
+			var questionBitmap *roaring.Bitmap
+			if containsThai(question) {
+				questionWords := cutThaiWord(strings.ToLower(question))
+				questionBitmap = createBitmapFromWords(questionWords)
 			} else {
-				queryWords = strings.Fields(strings.ToLower(query))
-				questionWords = strings.Fields(strings.ToLower(question))
+				questionWords := strings.Fields(strings.ToLower(question))
+				questionBitmap = createBitmapFromWords(questionWords)
 			}
 
-			matchCount := 0
-			wordMap := make(map[string]bool)
-			for _, word := range queryWords {
-				wordMap[word] = true
-			}
+			// Calculate intersection count
+			intersectionBitmap := roaring.And(queryBitmap, questionBitmap)
+			matchCount := int(intersectionBitmap.GetCardinality()) // Get the count of matching words
 
-			for _, word := range questionWords {
-				if wordMap[word] {
-					matchCount++
-				}
-			}
+			// Calculate similarity ratio
+			totalWords := queryBitmap.GetCardinality() + questionBitmap.GetCardinality()
+			similarity := float64(matchCount*2) / float64(totalWords)
 
-			similarity := float64(matchCount*2) / float64(len(queryWords)+len(questionWords))
-
-			mu.Lock() // Protect map access
+			// Store result
+			mu.Lock()
 			results[question] = similarity
 			mu.Unlock()
 		}(question)
