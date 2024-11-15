@@ -53,7 +53,7 @@ func main() {
 		AmountAnswer = 1
 	}
 
-	qaService := services.NewQAService(AmountAnswer)
+	faqService := services.NewFAQService(AmountAnswer)
 
 	// Initialize handlers based on config
 	for _, file := range config.Files {
@@ -80,12 +80,12 @@ func main() {
 
 		// Add the handler to the service if it's not nil
 		if handler != nil {
-			qaService.AddSource(handler)
+			faqService.AddSource(handler)
 		}
 	}
 
 	// Load questions from all sources
-	if err := qaService.LoadAllSources(); err != nil {
+	if err := faqService.LoadAllSources(); err != nil {
 		log.Fatalf("Error loading questions: %v", err)
 	}
 
@@ -102,7 +102,7 @@ func main() {
 			return
 		}
 
-		result, err := qaService.FindBestAnswer(requestBody.Q)
+		result, err := faqService.FindBestAnswer(requestBody.Q)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		} else {

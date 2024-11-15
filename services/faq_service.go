@@ -25,23 +25,23 @@ type AnswerResult struct {
 	Timestamp  time.Time `json:"timestamp"`
 }
 
-type QAService struct {
+type FAQService struct {
 	sources    []interfaces.QuestionAnswerSource
 	maxAnswers int // Store the configurable max answers
 }
 
-func NewQAService(maxAnswers int) *QAService {
-	return &QAService{
+func NewFAQService(maxAnswers int) *FAQService {
+	return &FAQService{
 		sources:    []interfaces.QuestionAnswerSource{},
 		maxAnswers: maxAnswers,
 	}
 }
 
-func (s *QAService) AddSource(source interfaces.QuestionAnswerSource) {
+func (s *FAQService) AddSource(source interfaces.QuestionAnswerSource) {
 	s.sources = append(s.sources, source)
 }
 
-func (s *QAService) LoadAllSources() error {
+func (s *FAQService) LoadAllSources() error {
 	for _, source := range s.sources {
 		if err := source.LoadQuestions(); err != nil {
 			return err
@@ -50,7 +50,7 @@ func (s *QAService) LoadAllSources() error {
 	return nil
 }
 
-func (s *QAService) FindBestAnswer(query string) ([]AnswerResult, error) {
+func (s *FAQService) FindBestAnswer(query string) ([]AnswerResult, error) {
 	var allAnswers []AnswerResult
 
 	// Find answers with confidence scores
@@ -75,7 +75,7 @@ func (s *QAService) FindBestAnswer(query string) ([]AnswerResult, error) {
 	return allAnswers, nil
 }
 
-func (s *QAService) searchWithConfidence(source interfaces.QuestionAnswerSource, query string) []AnswerResult {
+func (s *FAQService) searchWithConfidence(source interfaces.QuestionAnswerSource, query string) []AnswerResult {
 	var results []AnswerResult
 
 	// Extract questions and prepare a reverse map to link questions to answers

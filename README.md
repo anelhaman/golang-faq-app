@@ -1,4 +1,4 @@
-# Golang QA App
+# Golang FAQ App
 
 `golang-faq-app` is a question-answering API built in Go. It reads questions and answers from multiple CSV or Excel files and responds with the answer that most closely matches a given query. The application includes confidence scoring and timestamps in responses.
 
@@ -24,9 +24,9 @@ golang-faq-app/
 │   ├── remote_csv_handler.go      # Remote CSV file handler
 │   └── remote_excel_handler.go    # Remote Excel file handler
 ├── interfaces/
-│   └── qa_source.go        # Interface definition for question-answer sources
+│   └── faq_source.go        # Interface definition for question-answer sources
 ├── services/
-│   └── qa_service.go       # QA service with logic to find best-matched answer
+│   └── faq_service.go       # FAQ service with logic to find best-matched answer
 ├── main.go                 # Entry point for the API server
 ├── go.mod                  # Go Modules file
 └── README.md               # Project README
@@ -98,9 +98,9 @@ Response:
 ```
 
 ## Code Overview
-- interfaces/qa_source.go: Defines the QuestionAnswerSource interface, which includes methods to load and retrieve questions and answers.
+- interfaces/faq_source.go: Defines the QuestionAnswerSource interface, which includes methods to load and retrieve questions and answers.
 - handlers/: Contains CSVHandler and ExcelHandler, which implement QuestionAnswerSource.
-- services/qa_service.go: The core service that processes the query, calculates similarity, and provides the answer with confidence.
+- services/faq_service.go: The core service that processes the query, calculates similarity, and provides the answer with confidence.
 - main.go: Initializes the application, loads data sources, and starts the Gin server.
 
 ## Docker Setup
