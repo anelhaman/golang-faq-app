@@ -38,5 +38,7 @@ COPY --from=builder /go/pkg/mod/github.com/narongdejsrn/go-thaiwordcut@v0.0.0-20
 # Expose port 8080 for the Go app
 EXPOSE 8080
 
+ENV GIN_MODE=release
+
 # Command to run the Go application
 CMD ["./main"]

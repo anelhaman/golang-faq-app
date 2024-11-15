@@ -33,18 +33,24 @@ func (e *ExcelHandler) LoadQuestions() error {
 		return nil
 	}
 
-	// Assume the questions are in the first sheet
-	rows, err := f.GetRows(f.GetSheetName(0))
-	if err != nil {
-		// Log the error and skip this file
-		log.Printf("Failed to get rows from Excel file: %s, error: %v\n", e.path, err)
-		return nil
-	}
+	// Get all sheet names
+	sheetNames := f.GetSheetList()
 
-	// Store the questions and answers (assuming 1st column is question, 2nd is answer)
-	for _, row := range rows {
-		if len(row) >= 2 {
-			e.questions[row[0]] = row[1]
+	// Iterate through all sheets
+	for _, sheetName := range sheetNames {
+		// Get rows from the current sheet
+		rows, err := f.GetRows(sheetName)
+		if err != nil {
+			// Log the error and skip this sheet
+			log.Printf("Failed to get rows from sheet: %s in Excel file: %s, error: %v\n", sheetName, e.path, err)
+			continue
+		}
+
+		// Store the questions and answers (assuming 1st column is question, 2nd is answer)
+		for _, row := range rows {
+			if len(row) >= 2 {
+				e.questions[row[0]] = row[1]
+			}
 		}
 	}
 

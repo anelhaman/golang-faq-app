@@ -6,6 +6,7 @@ import (
 	"math"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 
@@ -71,15 +72,26 @@ func (s *QAService) FindBestAnswer(query string) ([]AnswerResult, error) {
 func (s *QAService) searchWithConfidence(source interfaces.QuestionAnswerSource, query string) []AnswerResult {
 	var results []AnswerResult
 
-	for question, answer := range source.GetQuestions() {
-		similarity := calculateSimilarity(query, question)
-		if similarity > 0.55 { // Confidence threshold, adjust as needed
+	// Extract questions and prepare a reverse map to link questions to answers
+	questions := []string{}
+	questionAnswerMap := make(map[string]string)
 
+	for question, answer := range source.GetQuestions() {
+		questions = append(questions, question)
+		questionAnswerMap[question] = answer
+	}
+
+	// Use the parallel similarity function
+	similarities := calculateSimilarityParallel(query, questions)
+
+	// Filter and build results based on the confidence threshold
+	for question, similarity := range similarities {
+		if similarity > 0.55 { // Confidence threshold
 			// Round confidence to two decimal places
 			roundedConfidence := math.Round(similarity*100) / 100
 
 			results = append(results, AnswerResult{
-				Answer:     answer,
+				Answer:     questionAnswerMap[question],
 				Confidence: roundedConfidence,
 				Timestamp:  time.Now(),
 			})
@@ -88,29 +100,49 @@ func (s *QAService) searchWithConfidence(source interfaces.QuestionAnswerSource,
 	return results
 }
 
-func calculateSimilarity(query, question string) float64 {
+func calculateSimilarityParallel(query string, questions []string) map[string]float64 {
 
-	var qWords, aWords []string
+	var queryWords, questionWords []string
 
-	matchCount := 0
+	results := make(map[string]float64)
+	var wg sync.WaitGroup
+	var mu sync.Mutex
 
-	if containsThai(query) {
-		qWords = cutThaiWord(strings.ToLower(query))
-		aWords = cutThaiWord(strings.ToLower(question))
-	} else {
-		qWords = strings.Fields(strings.ToLower(query))
-		aWords = strings.Fields(strings.ToLower(question))
-	}
+	for _, question := range questions { // Use questions here
+		wg.Add(1)
+		go func(question string) {
+			defer wg.Done()
 
-	for _, qWord := range qWords {
-		for _, aWord := range aWords {
-			if qWord == aWord {
-				matchCount++
+			if containsThai(query) {
+				queryWords = cutThaiWord(strings.ToLower(query))       // Tokenize query
+				questionWords = cutThaiWord(strings.ToLower(question)) // Tokenize question
+			} else {
+				queryWords = strings.Fields(strings.ToLower(query))
+				questionWords = strings.Fields(strings.ToLower(question))
 			}
-		}
+
+			matchCount := 0
+			wordMap := make(map[string]bool)
+			for _, word := range queryWords {
+				wordMap[word] = true
+			}
+
+			for _, word := range questionWords {
+				if wordMap[word] {
+					matchCount++
+				}
+			}
+
+			similarity := float64(matchCount*2) / float64(len(queryWords)+len(questionWords))
+
+			mu.Lock() // Protect map access
+			results[question] = similarity
+			mu.Unlock()
+		}(question)
 	}
 
-	return float64(matchCount*2) / float64(len(qWords)+len(aWords)) // Ratio of matches
+	wg.Wait()
+	return results
 }
 
 func cutThaiWord(s string) []string {
@@ -122,17 +154,11 @@ func cutThaiWord(s string) []string {
 	return result
 }
 
-func containsThai(text string) bool {
-	count := 0
-	for _, r := range text {
-		if unicode.Is(unicode.Thai, r) {
+// ContainsThai checks if a string contains any Thai characters
+func containsThai(input string) bool {
+	for _, r := range input {
+		if unicode.In(r, unicode.Thai) {
 			return true
-		} else if unicode.Is(unicode.Latin, r) {
-			return false
-		}
-		count++
-		if count >= 3 {
-			break
 		}
 	}
 	return false

@@ -1,17 +1,15 @@
 files:
+  - path: "./data/EVme KM-3.xlsx"
+    type: "excel"
+  - path: "./data/Factsheet.xlsx"
+    type: "excel"
+  - path: "./data/FAQ - 2wheels.xlsx"
+    type: "excel"
+  - path: "./data/FAQ_Rent.xlsx"
+    type: "excel"
+  - path: "./data/ปัญหารถที่พบบ่อย.xlsx"
+    type: "excel"
   - path: "./data/questions1.csv"
     type: "csv"
 
-  - path: "data/questions2.xlsx"
-    type: "excel"
-
-  - url: "https://example.com/questions.csv"
-    type: "csv"
-
-  - url: "https://example.com/questions.xlsx"
-    type: "excel"
-
-  - path: "data/test/not-exist-questions.xlsx"
-    type: "excel"
-
-max_answers: 3
+max_answers: 2
