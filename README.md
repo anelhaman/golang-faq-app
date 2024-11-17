@@ -1,6 +1,6 @@
-# Golang QA App
+# Golang FAQ App
 
-`golang-qa-app` is a question-answering API built in Go. It reads questions and answers from multiple CSV or Excel files and responds with the answer that most closely matches a given query. The application includes confidence scoring and timestamps in responses.
+`golang-faq-app` is a question-answering API built in Go. It reads questions and answers from multiple CSV or Excel files and responds with the answer that most closely matches a given query. The application includes confidence scoring and timestamps in responses.
 
 ## Features
 
@@ -8,29 +8,6 @@
 - Compares the input query with stored questions and returns the best-matched answer along with a confidence score.
 - Returns responses as a JSON API via Gin Gonic.
 - Supports Go Modules and is designed using an interface-based architecture with separate files for scalability and readability.
-
-## Project Structure
-
-```plaintext
-golang-qa-app/
-├── config/
-│   └── config.yaml         # Configuration file with paths to data files
-├── data/
-│   ├── questions1.csv      # Example CSV data file
-│   └── questions2.xlsx     # Example Excel data file
-├── handlers/
-│   ├── csv_handler.go      # CSV file handler
-│   ├── excel_handler.go    # Excel file handler
-│   ├── remote_csv_handler.go      # Remote CSV file handler
-│   └── remote_excel_handler.go    # Remote Excel file handler
-├── interfaces/
-│   └── qa_source.go        # Interface definition for question-answer sources
-├── services/
-│   └── qa_service.go       # QA service with logic to find best-matched answer
-├── main.go                 # Entry point for the API server
-├── go.mod                  # Go Modules file
-└── README.md               # Project README
-```
 
 # Getting Started
 Prerequisites
@@ -98,9 +75,9 @@ Response:
 ```
 
 ## Code Overview
-- interfaces/qa_source.go: Defines the QuestionAnswerSource interface, which includes methods to load and retrieve questions and answers.
+- interfaces/faq_source.go: Defines the QuestionAnswerSource interface, which includes methods to load and retrieve questions and answers.
 - handlers/: Contains CSVHandler and ExcelHandler, which implement QuestionAnswerSource.
-- services/qa_service.go: The core service that processes the query, calculates similarity, and provides the answer with confidence.
+- services/faq_service.go: The core service that processes the query, calculates similarity, and provides the answer with confidence.
 - main.go: Initializes the application, loads data sources, and starts the Gin server.
 
 ## Docker Setup
