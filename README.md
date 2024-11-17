@@ -9,29 +9,6 @@
 - Returns responses as a JSON API via Gin Gonic.
 - Supports Go Modules and is designed using an interface-based architecture with separate files for scalability and readability.
 
-## Project Structure
-
-```plaintext
-golang-faq-app/
-├── config/
-│   └── config.yaml         # Configuration file with paths to data files
-├── data/
-│   ├── questions1.csv      # Example CSV data file
-│   └── questions2.xlsx     # Example Excel data file
-├── handlers/
-│   ├── csv_handler.go      # CSV file handler
-│   ├── excel_handler.go    # Excel file handler
-│   ├── remote_csv_handler.go      # Remote CSV file handler
-│   └── remote_excel_handler.go    # Remote Excel file handler
-├── interfaces/
-│   └── faq_source.go        # Interface definition for question-answer sources
-├── services/
-│   └── faq_service.go       # FAQ service with logic to find best-matched answer
-├── main.go                 # Entry point for the API server
-├── go.mod                  # Go Modules file
-└── README.md               # Project README
-```
-
 # Getting Started
 Prerequisites
 - Go 1.23
