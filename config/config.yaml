@@ -12,4 +12,4 @@ files:
   - path: "./data/questions1.csv"
     type: "csv"
 
-max_answers: 3
+max_answers: 1
