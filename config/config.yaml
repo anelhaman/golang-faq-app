@@ -1,15 +1,13 @@
 files:
-  - path: "./data/EVme KM-3.xlsx"
+  - url: "https://evme-faq-km.s3.ap-southeast-1.amazonaws.com/Factsheet.xlsx"
     type: "excel"
-  - path: "./data/Factsheet.xlsx"
+  - url: "https://evme-faq-km.s3.ap-southeast-1.amazonaws.com/FAQ+-+2wheels.xlsx"
     type: "excel"
-  - path: "./data/FAQ - 2wheels.xlsx"
+  - url: "https://evme-faq-km.s3.ap-southeast-1.amazonaws.com/FAQ_Rent.xlsx"
     type: "excel"
-  - path: "./data/FAQ_Rent.xlsx"
+  - url: "https://evme-faq-km.s3.ap-southeast-1.amazonaws.com/%E0%B8%9B%E0%B8%B1%E0%B8%8D%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%96%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9E%E0%B8%9A%E0%B8%9A%E0%B9%88%E0%B8%AD%E0%B8%A2.xlsx"
     type: "excel"
-  - path: "./data/ปัญหารถที่พบบ่อย.xlsx"
+  - url: "https://evme-faq-km.s3.ap-southeast-1.amazonaws.com/EVme+KM-3.xlsx"
     type: "excel"
-  - path: "./data/questions1.csv"
-    type: "csv"
 
-max_answers: 1
+max_answers: 3

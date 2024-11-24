@@ -20,9 +20,11 @@ var wordIDCounter uint32 = 0
 var wordIDMu sync.Mutex
 
 type AnswerResult struct {
-	Answer     string    `json:"answer"`
-	Confidence float64   `json:"confidence"`
-	Timestamp  time.Time `json:"timestamp"`
+	Query         string    `json:"query"`
+	MatchQuestion string    `json:"match_question"`
+	Answer        string    `json:"answer"`
+	Confidence    float64   `json:"confidence"`
+	Timestamp     time.Time `json:"timestamp"`
 }
 
 type FAQService struct {
@@ -97,9 +99,11 @@ func (s *FAQService) searchWithConfidence(source interfaces.QuestionAnswerSource
 			roundedConfidence := math.Round(similarity*100) / 100
 
 			results = append(results, AnswerResult{
-				Answer:     questionAnswerMap[question],
-				Confidence: roundedConfidence,
-				Timestamp:  time.Now(),
+				Query:         query,
+				MatchQuestion: question,
+				Answer:        questionAnswerMap[question],
+				Confidence:    roundedConfidence,
+				Timestamp:     time.Now(),
 			})
 		}
 	}
