@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    # platform: linux/arm64/v8
     container_name: go-nginx
+    restart: always
     ports:
       - "80:80"  # NGINX port
