@@ -64,7 +64,7 @@ func (r *RemoteExcelHandler) LoadQuestions() error {
 		// Store the questions and answers (assuming 1st column is question, 2nd is answer)
 		for _, row := range rows {
 			if len(row) >= 2 {
-				r.questions[row[0]] = row[1]
+				r.questions[strings.TrimSpace(row[0])] = row[1]
 			}
 		}
 	}

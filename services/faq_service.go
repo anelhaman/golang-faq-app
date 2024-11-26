@@ -1,8 +1,11 @@
 package services
 
 import (
+	"context"
+	"encoding/json"
 	"errors"
 	"golang-faq-app/interfaces"
+	"log"
 	"math"
 	"sort"
 	"strings"
@@ -11,6 +14,7 @@ import (
 	"unicode"
 
 	roaring "github.com/RoaringBitmap/roaring"
+	"github.com/go-redis/redis/v8"
 	gothaiwordcut "github.com/narongdejsrn/go-thaiwordcut"
 )
 
@@ -28,14 +32,16 @@ type AnswerResult struct {
 }
 
 type FAQService struct {
-	sources    []interfaces.QuestionAnswerSource
-	maxAnswers int // Store the configurable max answers
+	sources     []interfaces.QuestionAnswerSource
+	maxAnswers  int // Store the configurable max answers
+	RedisClient *redis.Client
 }
 
-func NewFAQService(maxAnswers int) *FAQService {
+func NewFAQService(maxAnswers int, myRedisClient *redis.Client) *FAQService {
 	return &FAQService{
-		sources:    []interfaces.QuestionAnswerSource{},
-		maxAnswers: maxAnswers,
+		sources:     []interfaces.QuestionAnswerSource{},
+		maxAnswers:  maxAnswers,
+		RedisClient: myRedisClient,
 	}
 }
 
@@ -44,9 +50,26 @@ func (s *FAQService) AddSource(source interfaces.QuestionAnswerSource) {
 }
 
 func (s *FAQService) LoadAllSources() error {
+	ctx := context.Background() // Redis context
+
 	for _, source := range s.sources {
 		if err := source.LoadQuestions(); err != nil {
 			return err
+		}
+		// Cache each question and answer in Redis
+		for question, answer := range source.GetQuestions() {
+			// Serialize the answer for caching
+			cachedData, err := json.Marshal(answer)
+			if err != nil {
+				log.Printf("Failed to serialize answer for question '%s': %v\n", question, err)
+				continue
+			}
+
+			// Set the question-answer pair in Redis
+			err = s.RedisClient.Set(ctx, question, cachedData, time.Hour*24).Err() // Cache for 24 hours
+			if err != nil {
+				log.Printf("Failed to cache question '%s': %v\n", question, err)
+			}
 		}
 	}
 	return nil
@@ -54,6 +77,19 @@ func (s *FAQService) LoadAllSources() error {
 
 func (s *FAQService) FindBestAnswer(query string) ([]AnswerResult, error) {
 	var allAnswers []AnswerResult
+
+	ctx := context.Background() // Redis context
+
+	// Check if the query exists in Redis
+	cachedResult, err := s.RedisClient.Get(ctx, query).Result()
+	if err == nil {
+
+		log.Printf("Get Answer match from Redis, Query = %s\n", query)
+		// If found, deserialize the cached results and return them
+		if err := json.Unmarshal([]byte(cachedResult), &allAnswers); err == nil {
+			return allAnswers, nil
+		}
+	}
 
 	// Find answers with confidence scores
 	for _, source := range s.sources {
@@ -200,4 +236,24 @@ func containsThai(input string) bool {
 		}
 	}
 	return false
+}
+
+func (s *FAQService) InitializeFAQCache(source interfaces.QuestionAnswerSource) {
+	ctx := context.Background()
+
+	// Extract questions and answers from the source
+	for question, answer := range source.GetQuestions() {
+		// Prepare the data to cache
+		cachedData, err := json.Marshal(answer)
+		if err != nil {
+			log.Printf("Failed to serialize answer for question '%s': %v\n", question, err)
+			continue
+		}
+
+		// Set the question-answer pair in Redis
+		err = s.RedisClient.Set(ctx, question, cachedData, time.Hour*24).Err() // Cache for 24 hours
+		if err != nil {
+			log.Printf("Failed to cache question '%s': %v\n", question, err)
+		}
+	}
 }

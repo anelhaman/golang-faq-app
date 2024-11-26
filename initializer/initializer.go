@@ -4,6 +4,7 @@ import (
 	"golang-faq-app/config"
 	"golang-faq-app/handlers"
 	"golang-faq-app/interfaces"
+	"golang-faq-app/redis"
 	"golang-faq-app/services"
 )
 
@@ -21,8 +22,10 @@ func InitializeApp() (*config.Config, *services.FAQService, error) {
 		amountAnswer = 1
 	}
 
+	redisClient := redis.InitializeRedis()
+
 	// Initialize FAQService
-	faqService := services.NewFAQService(amountAnswer)
+	faqService := services.NewFAQService(amountAnswer, redisClient)
 
 	// Add sources based on the configuration
 	for _, file := range cfg.Files {

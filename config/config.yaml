@@ -10,4 +10,4 @@ files:
   - url: "https://evme-faq-km.s3.ap-southeast-1.amazonaws.com/EVme+KM-3.xlsx"
     type: "excel"
 
-max_answers: 3
+max_answers: 1
